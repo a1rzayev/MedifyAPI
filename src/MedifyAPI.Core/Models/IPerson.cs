@@ -7,6 +7,7 @@ public interface IPerson
     string Surname { get; set; }
     DateTime Birthdate { get; set; }
     GenderEnum Gender { get; set; }
-    public string Email { get; set; }
-    string PhoneNumber { get; set; }
+    string Phone { get; set; }
+    string Email { get; set; }
+    DateTime DateJoined { get; set; } 
 }
