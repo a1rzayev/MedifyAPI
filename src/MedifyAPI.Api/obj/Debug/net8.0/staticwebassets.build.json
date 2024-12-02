@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "F2tNNYUVCylZpJFpNlWH/U/SLFmJZAe9XQp5xRoohcs=",
+  "Source": "MedifyAPI.Api",
+  "BasePath": "_content/MedifyAPI.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

@@ -1,0 +1,12 @@
+C:\Users\Asif\Projects\MedifyAPI\src\MedifyAPI.Core\bin\Debug\net8.0\MedifyAPI.Core.deps.json
+C:\Users\Asif\Projects\MedifyAPI\src\MedifyAPI.Core\bin\Debug\net8.0\MedifyAPI.Core.dll
+C:\Users\Asif\Projects\MedifyAPI\src\MedifyAPI.Core\bin\Debug\net8.0\MedifyAPI.Core.pdb
+C:\Users\Asif\Projects\MedifyAPI\src\MedifyAPI.Core\obj\Debug\net8.0\MedifyAPI.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Asif\Projects\MedifyAPI\src\MedifyAPI.Core\obj\Debug\net8.0\MedifyAPI.Core.AssemblyInfoInputs.cache
+C:\Users\Asif\Projects\MedifyAPI\src\MedifyAPI.Core\obj\Debug\net8.0\MedifyAPI.Core.AssemblyInfo.cs
+C:\Users\Asif\Projects\MedifyAPI\src\MedifyAPI.Core\obj\Debug\net8.0\MedifyAPI.Core.csproj.CoreCompileInputs.cache
+C:\Users\Asif\Projects\MedifyAPI\src\MedifyAPI.Core\obj\Debug\net8.0\MedifyAPI.Core.sourcelink.json
+C:\Users\Asif\Projects\MedifyAPI\src\MedifyAPI.Core\obj\Debug\net8.0\MedifyAPI.Core.dll
+C:\Users\Asif\Projects\MedifyAPI\src\MedifyAPI.Core\obj\Debug\net8.0\refint\MedifyAPI.Core.dll
+C:\Users\Asif\Projects\MedifyAPI\src\MedifyAPI.Core\obj\Debug\net8.0\MedifyAPI.Core.pdb
+C:\Users\Asif\Projects\MedifyAPI\src\MedifyAPI.Core\obj\Debug\net8.0\ref\MedifyAPI.Core.dll
