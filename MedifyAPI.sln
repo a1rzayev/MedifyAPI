@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BEE3D6A8-57A7-4EB6-A169-055EA199905F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedifyAPI.Core", "src\MedifyAPI.Core\MedifyAPI.Core.csproj", "{4175EA28-F3FE-4036-981B-410B6A3675D5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedifyAPI.Infrastructure", "src\MedifyAPI.Infrastructure\MedifyAPI.Infrastructure.csproj", "{BFDBD139-5EAD-4511-B5AA-ED77053CB61E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4175EA28-F3FE-4036-981B-410B6A3675D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4175EA28-F3FE-4036-981B-410B6A3675D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4175EA28-F3FE-4036-981B-410B6A3675D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4175EA28-F3FE-4036-981B-410B6A3675D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFDBD139-5EAD-4511-B5AA-ED77053CB61E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFDBD139-5EAD-4511-B5AA-ED77053CB61E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFDBD139-5EAD-4511-B5AA-ED77053CB61E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFDBD139-5EAD-4511-B5AA-ED77053CB61E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4175EA28-F3FE-4036-981B-410B6A3675D5} = {BEE3D6A8-57A7-4EB6-A169-055EA199905F}
+		{BFDBD139-5EAD-4511-B5AA-ED77053CB61E} = {BEE3D6A8-57A7-4EB6-A169-055EA199905F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4E57A1E7-49EC-418B-B1A5-774E8F1A2548}
+	EndGlobalSection
+EndGlobal
