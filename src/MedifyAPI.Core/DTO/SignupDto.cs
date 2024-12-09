@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace MedifyAPI.Core.Dtos;
+namespace MedifyAPI.Core.DTO;
 public class RegistrationDto
 {
     [Required(ErrorMessage = "Name is required.")]

@@ -1,6 +1,7 @@
-using MedifyAPI.Core.Models;
+using MedifyAPI.Core.Enums;
+using MedifyAPI.Core.Models.Base;
 
-namespace MedifyAPI.Infrastructure.Models;
+namespace MedifyAPI.Core.Models;
 
 public class Admin : IPerson
 {
@@ -11,5 +12,6 @@ public class Admin : IPerson
     public GenderEnum Gender { get; set; }
     public string Phone { get; set; }
     public string Email { get; set; }
-    public DateTime DateJoined { get; set; } 
+    public DateTime DateJoined { get; set; }
+    GenderEnum IPerson.Gender { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 }

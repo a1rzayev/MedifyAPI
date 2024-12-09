@@ -1,4 +1,4 @@
-namespace MedifyAPI.Core.Models;
+namespace MedifyAPI.Core.Models.Base;
 
 public interface ILog
 {

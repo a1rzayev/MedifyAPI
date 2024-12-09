@@ -1,8 +1,9 @@
-using MedifyAPI.Core.Models;
+using MedifyAPI.Core.Enums;
+using MedifyAPI.Core.Models.Base;
 
-namespace MedifyAPI.Infrastructure.Models;
+namespace MedifyAPI.Core.Models;
 
-public class Patient : IPerson
+public class Doctor : IPerson
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
@@ -10,6 +11,7 @@ public class Patient : IPerson
     public DateTime Birthdate { get; set; }
     public GenderEnum Gender { get; set; }
     public string Phone { get; set; }
-    public string Email { get; set; }
+    public string Email { get; set; } 
     public DateTime DateJoined { get; set; } 
+    public SpecialityEnum Speciality { get; set; }
 }

@@ -1,6 +1,7 @@
-namespace MedifyAPI.Core.Models;
+namespace MedifyAPI.Core.Enums;
 
-public enum WeekDayEnum{
+public enum WeekDayEnum 
+{
     Monday = 1,
     Tuesday,
     Wednesday,

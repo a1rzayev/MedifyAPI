@@ -1,4 +1,6 @@
-namespace MedifyAPI.Core.Models;
+using MedifyAPI.Core.Enums;
+
+namespace MedifyAPI.Core.Models.Base;
 
 public interface IPerson
 {

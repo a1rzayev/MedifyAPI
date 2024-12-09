@@ -1,6 +1,6 @@
-using MedifyAPI.Core.Models;
+using MedifyAPI.Core.Models.Base;
 
-namespace MedifyAPI.Infrastructure.Models;
+namespace MedifyAPI.Core.Models;
 
 public class Log : ILog
 {

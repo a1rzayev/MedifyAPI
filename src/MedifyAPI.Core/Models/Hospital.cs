@@ -1,6 +1,6 @@
-using MedifyAPI.Core.Models;
+using MedifyAPI.Core.Enums;
 
-namespace MedifyAPI.Infrastructure.Models;
+namespace MedifyAPI.Core.Models;
 
 public class Hospital
 {
