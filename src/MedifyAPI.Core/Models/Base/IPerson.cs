@@ -1,4 +1,6 @@
-namespace MedifyAPI.Core.Models;
+using MedifyAPI.Core.Enums;
+
+namespace MedifyAPI.Core.Models.Base;
 
 public interface IPerson
 {
@@ -7,6 +9,7 @@ public interface IPerson
     string Surname { get; set; }
     DateTime Birthdate { get; set; }
     GenderEnum Gender { get; set; }
-    public string Email { get; set; }
-    string PhoneNumber { get; set; }
+    string Phone { get; set; }
+    string Email { get; set; }
+    DateTime DateJoined { get; set; } 
 }

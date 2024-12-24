@@ -1,4 +1,4 @@
-namespace MedifyAPI.Core.Models;
+namespace MedifyAPI.Core.Enums;
 
 public enum SpecialityEnum
 {
