@@ -13,5 +13,4 @@ public class Admin : IPerson
     public string Phone { get; set; }
     public string Email { get; set; }
     public DateTime DateJoined { get; set; }
-    GenderEnum IPerson.Gender { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 }

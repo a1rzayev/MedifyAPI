@@ -1,4 +1,5 @@
 using MedifyAPI.Core.Enums;
+using MedifyAPI.Core.Models.Base;
 
 namespace MedifyAPI.Core.Models;
 
@@ -10,6 +11,5 @@ public class Hospital
     public IEnumerable<string> Phones { get; set; }
     public string Email { get; set; }
     public string Website { get; set; }
-    public Dictionary<WeekDayEnum, (TimeOnly, TimeOnly)> WorkingDaysHours { get; set; }
     public HospitalTypeEnum Type { get; set; }
 }

@@ -47,8 +47,35 @@ public class MedifyDbContext : DbContext
             entity.Property(p => p.Phone).HasMaxLength(15);
             entity.Property(p => p.DateJoined);
         });
+        modelBuilder.Entity<Log>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.DoctorId).IsRequired();
+            entity.Property(e => e.PatientId).IsRequired();
+            entity.Property(e => e.Description).IsRequired();
+            entity.Property(e => e.Date).IsRequired();
+        });
 
+        modelBuilder.Entity<Hospital>(entity =>
+        {
+            entity.HasKey(h => h.Id);
+            entity.Property(h => h.Name).IsRequired();
+            entity.Property(h => h.Address).IsRequired();
+            entity.Property(h => h.Phones).HasColumnType("nvarchar(max)"); // JSON column
+            entity.Property(h => h.Email).HasMaxLength(255);
+            entity.Property(h => h.Website).HasMaxLength(255);
+            entity.Property(h => h.Type).IsRequired();
+        });
 
+        modelBuilder.Entity<WeekDayHours>(entity =>
+        {
+            entity.HasKey(w => w.Id);
+            entity.Property(w => w.WeekDay).IsRequired();
+            entity.Property(w => w.StartHour).IsRequired();
+            entity.Property(w => w.StartMinute).IsRequired();
+            entity.Property(w => w.EndHour).IsRequired();
+            entity.Property(w => w.EndMinute).IsRequired();
+        });
         base.OnModelCreating(modelBuilder);
     }
 }
