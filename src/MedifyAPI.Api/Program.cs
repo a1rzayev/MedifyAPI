@@ -1,4 +1,11 @@
 using MedifyAPI.Infrastructure.Repositories.EfCore.DbContexts;
+using Microsoft.EntityFrameworkCore;
+
+using MedifyAPI.Core.Services;
+using MedifyAPI.Core.Repositories;
+using MedifyAPI.Infrastructure.Services;
+using MedifyAPI.Infrastructure.Repositories.EfCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +15,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+const string LocalHostUrl = "http://localhost:5271";
+
+builder.Services.AddScoped<IHospitalRepository, HospitalEfCoreRepository>();
+builder.Services.AddScoped<IHospitalService, HospitalService>();
+
+builder.Services.AddScoped<IPatientRepository, PatientEfCoreRepository>();
+builder.Services.AddScoped<IPatientService, PatientService>();
+
+builder.Services.AddScoped<IDoctorRepository, DoctorEfCoreRepository>();
+builder.Services.AddScoped<IDoctorService, DoctorService>();
+
+builder.Services.AddScoped<ILogRepository, LogEfCoreRepository>();
+builder.Services.AddScoped<ILogService, LogService>();
+
+
 
 builder.Services.AddDbContext<MedifyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MsSql"))

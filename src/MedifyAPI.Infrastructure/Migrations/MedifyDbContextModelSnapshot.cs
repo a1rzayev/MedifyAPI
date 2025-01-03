@@ -162,7 +162,7 @@ namespace MedifyAPI.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Log");
+                    b.ToTable("Logs");
                 });
 
             modelBuilder.Entity("MedifyAPI.Core.Models.Patient", b =>
