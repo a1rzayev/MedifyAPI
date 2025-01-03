@@ -24,6 +24,13 @@ builder.Services.AddScoped<IHospitalService, HospitalService>();
 builder.Services.AddScoped<IPatientRepository, PatientEfCoreRepository>();
 builder.Services.AddScoped<IPatientService, PatientService>();
 
+builder.Services.AddScoped<IDoctorRepository, DoctorEfCoreRepository>();
+builder.Services.AddScoped<IDoctorService, DoctorService>();
+
+builder.Services.AddScoped<ILogRepository, LogEfCoreRepository>();
+builder.Services.AddScoped<ILogService, LogService>();
+
+
 
 builder.Services.AddDbContext<MedifyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MsSql"))

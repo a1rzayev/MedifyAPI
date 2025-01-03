@@ -7,36 +7,36 @@ namespace MedifyAPI.Infrastructure.Services;
 
 public class HospitalService : IHospitalService
 {
-    private readonly IHospitalRepository HospitalRepository;
+    private readonly IHospitalRepository hospitalRepository;
 
-    public HospitalService(IHospitalRepository HospitalRepository)
+    public HospitalService(IHospitalRepository hospitalRepository)
     {
-        this.HospitalRepository = HospitalRepository;
+        this.hospitalRepository = hospitalRepository;
     }
     
 
     public async Task<IEnumerable<Hospital>> GetAllAsync()
     {
-        return await HospitalRepository.GetAllAsync();
+        return await hospitalRepository.GetAllAsync();
     }
 
     public async Task<Hospital?> GetByIdAsync(Guid id)
     {
-        return await HospitalRepository.GetByIdAsync(id);
+        return await hospitalRepository.GetByIdAsync(id);
     }
 
     public async Task<Hospital> AddAsync(Hospital hospital)
     {
-        return await HospitalRepository.AddAsync(hospital);
+        return await hospitalRepository.AddAsync(hospital);
     }
 
     public async Task<Hospital> UpdateAsync(Hospital hospital)
     {
-        return await HospitalRepository.UpdateAsync(hospital);
+        return await hospitalRepository.UpdateAsync(hospital);
     }
 
     public async Task<bool> DeleteAsync(Guid id)
     {
-        return await HospitalRepository.DeleteAsync(id);
+        return await hospitalRepository.DeleteAsync(id);
     }
 }
