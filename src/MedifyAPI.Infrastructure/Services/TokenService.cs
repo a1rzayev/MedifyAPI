@@ -1,4 +1,8 @@
+using MedifyAPI.Core.Models;
+using MedifyAPI.Core.Repositories;
 using MedifyAPI.Core.Services;
+using MedifyAPI.Infrastructure.Repositories.EfCore;
+using MedifyAPI.Infrastructure.Repositories.EfCore.DbContexts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -6,57 +10,45 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
+namespace MedifyAPI.Infrastructure.Services;
+
 public class TokenService : ITokenService
 {
-    private readonly IConfiguration _configuration;
+    private readonly ITokenRepository tokenRepository;
 
-    public TokenService(IConfiguration configuration)
+    public TokenService(ITokenRepository tokenRepository)
     {
-        _configuration = configuration;
+        this.tokenRepository = tokenRepository;
     }
 
     public string GenerateAccessToken(IEnumerable<Claim> claims)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(double.Parse(_configuration["Jwt:AccessTokenLifetimeMinutes"])),
-            signingCredentials: creds);
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return this.tokenRepository.GenerateAccessToken(claims);
     }
 
     public string GenerateRefreshToken()
     {
-        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+        return this.tokenRepository.GenerateRefreshToken();
     }
 
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
-        var tokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidIssuer = _configuration["Jwt:Issuer"],
-            ValidAudience = _configuration["Jwt:Audience"],
-            ValidateLifetime = false 
-        };
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
-
-        if (securityToken is not JwtSecurityToken jwtSecurityToken ||
-            !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-        {
-            throw new SecurityTokenException("Invalid token");
-        }
-
-        return principal;
+        return this.tokenRepository.GetPrincipalFromExpiredToken(token);
     }
+    public async Task StoreRefreshTokenAsync(Guid userId, string refreshToken)
+    {
+        await this.tokenRepository.StoreRefreshTokenAsync(userId, refreshToken);
+    }
+
+    // Validate the refresh token
+    public async Task<RefreshToken> ValidateRefreshTokenAsync(string refreshToken)
+    {
+        return await this.tokenRepository.ValidateRefreshTokenAsync(refreshToken);
+    }
+
+    public async Task RevokeRefreshTokenAsync(string refreshToken)
+    {
+        await this.tokenRepository.RevokeRefreshTokenAsync(refreshToken);
+    }
+
 }

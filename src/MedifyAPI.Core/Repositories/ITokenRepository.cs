@@ -1,9 +1,8 @@
 using System.Security.Claims;
 using MedifyAPI.Core.Models;
 
-namespace MedifyAPI.Core.Services;
-
-public interface ITokenService
+namespace MedifyAPI.Core.Repositories;
+public interface ITokenRepository
 {
     string GenerateAccessToken(IEnumerable<Claim> claims);
     string GenerateRefreshToken();

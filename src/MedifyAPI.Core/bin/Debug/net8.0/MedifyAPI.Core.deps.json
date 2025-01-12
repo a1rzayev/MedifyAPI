@@ -14,6 +14,7 @@
           "Microsoft.EntityFrameworkCore.SqlServer": "9.0.0",
           "Microsoft.Extensions.Configuration": "9.0.0",
           "Microsoft.Extensions.Configuration.Json": "9.0.0",
+          "Microsoft.IdentityModel.Tokens": "8.3.0",
           "System.IdentityModel.Tokens.Jwt": "8.3.0"
         },
         "runtime": {

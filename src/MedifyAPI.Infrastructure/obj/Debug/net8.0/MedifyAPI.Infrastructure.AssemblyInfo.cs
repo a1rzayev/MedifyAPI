@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MedifyAPI.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e70c03b7e4ac64a2ddf9eccdd04483abb44138bd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2c357edb4d3ab76d8a2025910c928268fab94fe1")]
 [assembly: System.Reflection.AssemblyProductAttribute("MedifyAPI.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MedifyAPI.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

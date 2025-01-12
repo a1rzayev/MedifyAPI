@@ -25,6 +25,7 @@ builder.Services.AddSwaggerGen();
 
 const string LocalHostUrl = "http://localhost:5271";
 
+builder.Services.AddScoped<ITokenRepository, TokenEfCoreRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 
