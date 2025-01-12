@@ -79,6 +79,15 @@ public class MedifyDbContext : DbContext
             entity.Property(w => w.EndHour).IsRequired();
             entity.Property(w => w.EndMinute).IsRequired();
         });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasKey(rt => rt.Id); 
+            entity.Property(rt => rt.UserId).IsRequired();
+            entity.Property(rt => rt.Token).IsRequired().HasMaxLength(500);
+            entity.Property(rt => rt.ExpirationDate).IsRequired();
+            entity.Property(rt => rt.IsRevoked).IsRequired();
+        });
         base.OnModelCreating(modelBuilder);
     }
 }
