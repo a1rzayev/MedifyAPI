@@ -5,65 +5,64 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MedifyAPI.Controllers
+namespace MedifyAPI.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class PatientsController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class PatientsController : ControllerBase
+    private readonly IPatientService _patientService;
+
+    public PatientsController(IPatientService patientService)
     {
-        private readonly IPatientService _patientService;
+        _patientService = patientService;
+    }
 
-        public PatientsController(IPatientService patientService)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Patient>>> GetAll()
+    {
+        var patients = await _patientService.GetAllAsync();
+        return Ok(patients);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Patient>> GetById(Guid id)
+    {
+        var patient = await _patientService.GetByIdAsync(id);
+        if (patient == null)
         {
-            _patientService = patientService;
+            return NotFound();
+        }
+        return Ok(patient);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Patient>> Add([FromBody] Patient patient)
+    {
+        var newPatient = await _patientService.AddAsync(patient);
+        return CreatedAtAction(nameof(GetById), new { id = newPatient.Id }, newPatient);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<Patient>> Update(Guid id, [FromBody] Patient patient)
+    {
+        if (id != patient.Id)
+        {
+            return BadRequest();
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Patient>>> GetAll()
-        {
-            var patients = await _patientService.GetAllAsync();
-            return Ok(patients);
-        }
+        var updatedPatient = await _patientService.UpdateAsync(patient);
+        return Ok(updatedPatient);
+    }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Patient>> GetById(Guid id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var result = await _patientService.DeleteAsync(id);
+        if (!result)
         {
-            var patient = await _patientService.GetByIdAsync(id);
-            if (patient == null)
-            {
-                return NotFound();
-            }
-            return Ok(patient);
+            return NotFound();
         }
-
-        [HttpPost]
-        public async Task<ActionResult<Patient>> Add([FromBody] Patient patient)
-        {
-            var newPatient = await _patientService.AddAsync(patient);
-            return CreatedAtAction(nameof(GetById), new { id = newPatient.Id }, newPatient);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult<Patient>> Update(Guid id, [FromBody] Patient patient)
-        {
-            if (id != patient.Id)
-            {
-                return BadRequest();
-            }
-
-            var updatedPatient = await _patientService.UpdateAsync(patient);
-            return Ok(updatedPatient);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            var result = await _patientService.DeleteAsync(id);
-            if (!result)
-            {
-                return NotFound();
-            }
-            return NoContent();
-        }
+        return NoContent();
     }
 }
