@@ -35,12 +35,12 @@ public class TokenService : ITokenService
     {
         return this.tokenRepository.GetPrincipalFromExpiredToken(token);
     }
+    
     public async Task StoreRefreshTokenAsync(Guid userId, string refreshToken)
     {
         await this.tokenRepository.StoreRefreshTokenAsync(userId, refreshToken);
     }
 
-    // Validate the refresh token
     public async Task<RefreshToken> ValidateRefreshTokenAsync(string refreshToken)
     {
         return await this.tokenRepository.ValidateRefreshTokenAsync(refreshToken);
