@@ -24,6 +24,10 @@ public class HospitalEfCoreRepository : IHospitalRepository
     {
         return await _context.Hospitals.FindAsync(id);
     }
+    public async Task<IEnumerable<Hospital>?> GetByNameAsync(string name)
+    {
+        return await _context.Hospitals.Where(hospital => hospital.Name == name);
+    }
 
     public async Task<Hospital> AddAsync(Hospital hospital)
     {

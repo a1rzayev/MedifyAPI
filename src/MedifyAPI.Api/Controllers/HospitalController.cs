@@ -36,6 +36,17 @@ public class HospitalController : ControllerBase
         return Ok(hospital);
     }
 
+    [HttpGet("{name}")]
+    public async Task<ActionResult<IEnumerable<Hospital>>> GetByName(string name)
+    {
+        var hospitals = await _hospitalService.GetByNameAsync(id);
+        if (hospital == null)
+        {
+            return NotFound();
+        }
+        return Ok(hospitals);
+    }
+
     [HttpPost]
     public async Task<ActionResult<Hospital>> Add([FromBody] Hospital hospital)
     {

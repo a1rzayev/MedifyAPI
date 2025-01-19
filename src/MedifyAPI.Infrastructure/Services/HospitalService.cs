@@ -25,6 +25,11 @@ public class HospitalService : IHospitalService
         return await hospitalRepository.GetByIdAsync(id);
     }
 
+    public async Task<IEnumerable<Hospital>?> GetByNameAsync(Guid id)
+    {
+        return await hospitalRepository.GetByNameAsync(id);
+    }
+
     public async Task<Hospital> AddAsync(Hospital hospital)
     {
         return await hospitalRepository.AddAsync(hospital);
