@@ -16,7 +16,7 @@ namespace MedifyAPI.Api.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly UserManager<IPerson> _userManager; 
+    private readonly UserManager<IPerson> _userManager;
     private readonly ITokenService _tokenService;
     private readonly MedifyDbContext _context;
 
@@ -84,4 +84,67 @@ public class AuthController : ControllerBase
 
         return Ok("User logged out successfully");
     }
+    [HttpPost("SignUp")]
+    public async Task<IActionResult> SignUp([FromBody] SignUpDto signUpDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (await _userManager.FindByEmailAsync(signUpDto.Email) != null)
+        {
+            return BadRequest("Email is already in use");
+        }
+
+        var user = new Person
+        {
+            Id = Guid.NewGuid(),
+            UserName = signUpDto.Email,
+            Email = signUpDto.Email,
+            Name = signUpDto.Name,
+            Surname = signUpDto.Surname,
+            DateJoined = DateTime.UtcNow, 
+            Gender = GenderEnum.Other,
+            Phone = "",
+        };
+
+        var result = await _userManager.CreateAsync(user, signUpDto.Password);
+
+        if (!result.Succeeded)
+        {
+            return BadRequest(result.Errors); 
+        }
+
+        await _userManager.AddToRoleAsync(user, "User");
+
+        var claims = new[]
+        {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Name, user.Name),
+        new Claim(ClaimTypes.Email, user.Email)
+    };
+
+        var accessToken = _tokenService.GenerateAccessToken(claims);
+        var refreshToken = _tokenService.GenerateRefreshToken();
+
+        var refreshTokenEntity = new RefreshToken
+        {
+            Id = Guid.NewGuid(),
+            UserId = user.Id,
+            Token = refreshToken,
+            ExpirationDate = DateTime.UtcNow.AddDays(7),
+            IsRevoked = false
+        };
+
+        _context.RefreshTokens.Add(refreshTokenEntity);
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken
+        });
+    }
+
 }
