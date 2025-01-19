@@ -9,11 +9,11 @@ namespace MedifyAPI.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class HospitalsController : ControllerBase
+public class HospitalController : ControllerBase
 {
     private readonly IHospitalService _hospitalService;
 
-    public HospitalsController(IHospitalService hospitalService)
+    public HospitalController(IHospitalService hospitalService)
     {
         _hospitalService = hospitalService;
     }

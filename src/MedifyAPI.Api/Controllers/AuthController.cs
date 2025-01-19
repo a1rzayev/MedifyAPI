@@ -1,150 +1,153 @@
 using Microsoft.AspNetCore.Mvc;
 using MedifyAPI.Core.Models;
 using MedifyAPI.Core.Models.Base;
+using MedifyAPI.Core.DTO;
 using MedifyAPI.Core.Services;
 using MedifyAPI.Infrastructure.Repositories.EfCore.DbContexts;
-using MedifyAPI.Core.DTO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
-namespace MedifyAPI.Api.Controllers;
-
-[Route("api/[controller]")]
-[ApiController]
-public class AuthController : ControllerBase
+namespace MedifyAPI.Api.Controllers
 {
-    private readonly UserManager<IPerson> _userManager;
-    private readonly ITokenService _tokenService;
-    private readonly MedifyDbContext _context;
-
-    public AuthController(UserManager<IPerson> userManager, ITokenService tokenService, MedifyDbContext context)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AuthController : ControllerBase
     {
-        _userManager = userManager;
-        _tokenService = tokenService;
-        _context = context;
-    }
+        private readonly UserManager<IPerson> _userManager;
+        private readonly SignInManager<IPerson> _signInManager;
+        private readonly ITokenService _tokenService;
+        private readonly MedifyDbContext _context;
 
-    [HttpPost("Login")]
-    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
-    {
-        var user = await _userManager.FindByEmailAsync(loginDto.Email);
-        if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
+        public AuthController(UserManager<IPerson> userManager,
+                              SignInManager<IPerson> signInManager,
+                              ITokenService tokenService,
+                              MedifyDbContext context)
         {
-            return Unauthorized("Invalid credentials");
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _tokenService = tokenService;
+            _context = context;
         }
 
-        var claims = new[]
+        // Sign Up Method
+        [HttpPost("Signup")]
+        public async Task<IActionResult> SignUp([FromBody] SignupDto signupDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            // Check if email already exists
+            var existingUser = await _userManager.FindByEmailAsync(signupDto.Email);
+            if (existingUser != null)
+            {
+                return BadRequest("Email is already in use.");
+            }
+
+            IPerson person;
+
+            if (signupDto.Role == "Doctor")
+            {
+                var doctor = new Doctor
+                {
+                    Id = Guid.NewGuid(),
+                    Email = signupDto.Email,
+                    Name = signupDto.Name,
+                    Surname = signupDto.Surname,
+                    DateJoined = DateTime.UtcNow
+                };
+                person = doctor;
+            }
+            else if (signupDto.Role == "Patient")
+            {
+                var patient = new Patient
+                {
+                    Id = Guid.NewGuid(),
+                    Email = signupDto.Email,
+                    Name = signupDto.Name,
+                    Surname = signupDto.Surname,
+                    DateJoined = DateTime.UtcNow
+                };
+                person = patient;
+            }
+            else
+            {
+                return BadRequest("Invalid user type.");
+            }
+
+            var result = await _userManager.CreateAsync(person, signupDto.Password);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            // Optionally, you can assign roles here
+            await _userManager.AddToRoleAsync(person, signupDto.Role);
+
+            return Ok(new { message = "User registered successfully." });
+        }
+
+        // Login Method
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        {
+            var user = await _userManager.FindByEmailAsync(loginDto.Email);
+            if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
+            {
+                return Unauthorized("Invalid credentials");
+            }
+
+            // Generate JWT tokens
+            var claims = new[]
+            {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Email, user.Email)
             };
 
-        var accessToken = _tokenService.GenerateAccessToken(claims);
-        var refreshToken = _tokenService.GenerateRefreshToken();
+            var accessToken = _tokenService.GenerateAccessToken(claims);
+            var refreshToken = _tokenService.GenerateRefreshToken();
 
-        var refreshTokenEntity = new RefreshToken
-        {
-            Id = Guid.NewGuid(),
-            UserId = user.Id,
-            Token = refreshToken,
-            ExpirationDate = DateTime.UtcNow.AddDays(7),
-            IsRevoked = false
-        };
-
-        _context.RefreshTokens.Add(refreshTokenEntity);
-        await _context.SaveChangesAsync();
-
-        return Ok(new
-        {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken
-        });
-    }
-
-    [HttpPost("Logout")]
-    public IActionResult Logout()
-    {
-
-        var refreshToken = Request.Cookies["refreshToken"];
-
-        if (refreshToken != null)
-        {
-            var tokenEntity = _context.RefreshTokens.SingleOrDefault(rt => rt.Token == refreshToken);
-            if (tokenEntity != null)
+            // Save refresh token in the database
+            var refreshTokenEntity = new RefreshToken
             {
-                tokenEntity.IsRevoked = true;
-                _context.RefreshTokens.Update(tokenEntity);
-                _context.SaveChanges();
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                Token = refreshToken,
+                ExpirationDate = DateTime.UtcNow.AddDays(7),
+                IsRevoked = false
+            };
+
+            _context.RefreshTokens.Add(refreshTokenEntity);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
+            });
+        }
+
+        // Logout Method
+        [HttpPost("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            if (refreshToken != null)
+            {
+                var tokenEntity = _context.RefreshTokens.SingleOrDefault(rt => rt.Token == refreshToken);
+                if (tokenEntity != null)
+                {
+                    tokenEntity.IsRevoked = true;
+                    _context.RefreshTokens.Update(tokenEntity);
+                    await _context.SaveChangesAsync();
+                }
             }
-        }
 
-        return Ok("User logged out successfully");
+            return Ok("User logged out successfully.");
+        }
     }
-    [HttpPost("SignUp")]
-    public async Task<IActionResult> SignUp([FromBody] SignUpDto signUpDto)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
-        if (await _userManager.FindByEmailAsync(signUpDto.Email) != null)
-        {
-            return BadRequest("Email is already in use");
-        }
-
-        var user = new Person
-        {
-            Id = Guid.NewGuid(),
-            UserName = signUpDto.Email,
-            Email = signUpDto.Email,
-            Name = signUpDto.Name,
-            Surname = signUpDto.Surname,
-            DateJoined = DateTime.UtcNow, 
-            Gender = GenderEnum.Other,
-            Phone = "",
-        };
-
-        var result = await _userManager.CreateAsync(user, signUpDto.Password);
-
-        if (!result.Succeeded)
-        {
-            return BadRequest(result.Errors); 
-        }
-
-        await _userManager.AddToRoleAsync(user, "User");
-
-        var claims = new[]
-        {
-        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-        new Claim(ClaimTypes.Name, user.Name),
-        new Claim(ClaimTypes.Email, user.Email)
-    };
-
-        var accessToken = _tokenService.GenerateAccessToken(claims);
-        var refreshToken = _tokenService.GenerateRefreshToken();
-
-        var refreshTokenEntity = new RefreshToken
-        {
-            Id = Guid.NewGuid(),
-            UserId = user.Id,
-            Token = refreshToken,
-            ExpirationDate = DateTime.UtcNow.AddDays(7),
-            IsRevoked = false
-        };
-
-        _context.RefreshTokens.Add(refreshTokenEntity);
-        await _context.SaveChangesAsync();
-
-        return Ok(new
-        {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken
-        });
-    }
-
 }

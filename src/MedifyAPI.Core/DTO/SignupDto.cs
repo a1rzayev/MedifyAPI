@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace MedifyAPI.Core.DTO;
-public class RegistrationDto
+public class SignupDto
 {
     [Required(ErrorMessage = "Name is required.")]
     [MaxLength(50, ErrorMessage = "Name can't be longer than 50 characters.")]
@@ -19,4 +19,6 @@ public class RegistrationDto
     [MinLength(8, ErrorMessage = "Password must be at least 8 characters long.")]
     [RegularExpression(@"^(?=.*[A-Z])(?=.*\W)(?=.*\d).+$", ErrorMessage = "Password must contain at least one uppercase letter, one special character, and one number.")]
     public string? Password { get; set; }
+
+    public string? Role { get; set; } // "Doctor" or "Patient"
 }
