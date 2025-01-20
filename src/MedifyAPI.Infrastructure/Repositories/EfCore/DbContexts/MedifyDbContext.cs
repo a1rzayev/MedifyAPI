@@ -26,6 +26,7 @@ public class MedifyDbContext : DbContext
             entity.Property(a => a.Name).IsRequired().HasMaxLength(50);
             entity.Property(a => a.Surname).IsRequired().HasMaxLength(50);
             entity.Property(a => a.Email).IsRequired().HasMaxLength(50);
+            entity.Property(a => a.Password).IsRequired().HasMaxLength(50);
             entity.Property(a => a.Phone).HasMaxLength(15);
             entity.Property(a => a.DateJoined);
         });
@@ -36,6 +37,7 @@ public class MedifyDbContext : DbContext
             entity.Property(d => d.Name).IsRequired().HasMaxLength(50);
             entity.Property(d => d.Surname).IsRequired().HasMaxLength(50);
             entity.Property(d => d.Email).IsRequired().HasMaxLength(50);
+            entity.Property(a => a.Password).IsRequired().HasMaxLength(50);
             entity.Property(d => d.Phone).HasMaxLength(15);
             entity.Property(d => d.DateJoined);
             entity.Property(d => d.Speciality).IsRequired();
@@ -47,6 +49,7 @@ public class MedifyDbContext : DbContext
             entity.Property(p => p.Name).IsRequired().HasMaxLength(50);
             entity.Property(p => p.Surname).IsRequired().HasMaxLength(50);
             entity.Property(p => p.Email).IsRequired().HasMaxLength(50);
+            entity.Property(a => a.Password).IsRequired().HasMaxLength(50);
             entity.Property(p => p.Phone).HasMaxLength(15);
             entity.Property(p => p.DateJoined);
         });

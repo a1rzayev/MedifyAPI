@@ -11,5 +11,6 @@ public interface IPerson
     GenderEnum Gender { get; set; }
     string Phone { get; set; }
     string Email { get; set; }
+    public string Password { get; set; }
     DateTime DateJoined { get; set; } 
 }

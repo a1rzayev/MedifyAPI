@@ -39,8 +39,8 @@ public class HospitalController : ControllerBase
     [HttpGet("{name}")]
     public async Task<ActionResult<IEnumerable<Hospital>>> GetByName(string name)
     {
-        var hospitals = await _hospitalService.GetByNameAsync(id);
-        if (hospital == null)
+        var hospitals = await _hospitalService.GetByNameAsync(name);
+        if (hospitals == null)
         {
             return NotFound();
         }

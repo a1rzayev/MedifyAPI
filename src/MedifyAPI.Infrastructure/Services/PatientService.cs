@@ -24,6 +24,10 @@ public class PatientService : IPatientService
     {
         return await patientRepository.GetByIdAsync(id);
     }
+    public async Task<Patient?> GetByEmailAsync(string email)
+    {
+        return await patientRepository.GetByEmailAsync(email);
+    }
 
     public async Task<Patient> AddAsync(Patient patient)
     {

@@ -24,6 +24,10 @@ public class PatientEfCoreRepository : IPatientRepository
     {
         return await _context.Patients.FindAsync(id);
     }
+    public async Task<Patient?> GetByEmailAsync(string email)
+    {
+        return await _context.Patients.FirstAsync(patient => patient.Email == email);
+    }
 
     public async Task<Patient> AddAsync(Patient patient)
     {

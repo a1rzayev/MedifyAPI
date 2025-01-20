@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using MedifyAPI.Core.Models;
+using MedifyAPI.Core.Repositories;
 using MedifyAPI.Core.Models.Base;
 using MedifyAPI.Core.DTO;
 using MedifyAPI.Core.Services;
 using MedifyAPI.Infrastructure.Repositories.EfCore.DbContexts;
+using MedifyAPI.Infrastructure.Repositories.EfCore;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;
@@ -16,23 +18,23 @@ namespace MedifyAPI.Api.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IPerson> _userManager;
-        private readonly SignInManager<IPerson> _signInManager;
         private readonly ITokenService _tokenService;
         private readonly MedifyDbContext _context;
+        private readonly IDoctorService _doctorService;
+        private readonly IPatientService _patientService;
 
-        public AuthController(UserManager<IPerson> userManager,
-                              SignInManager<IPerson> signInManager,
+        public AuthController(
                               ITokenService tokenService,
-                              MedifyDbContext context)
+                              MedifyDbContext context,
+                              IDoctorService doctorService,
+                              IPatientService patientService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
             _tokenService = tokenService;
             _context = context;
+            _doctorService = doctorService;
+            _patientService = patientService;
         }
 
-        // Sign Up Method
         [HttpPost("Signup")]
         public async Task<IActionResult> SignUp([FromBody] SignupDto signupDto)
         {
@@ -40,61 +42,35 @@ namespace MedifyAPI.Api.Controllers
                 return BadRequest(ModelState);
 
             // Check if email already exists
-            var existingUser = await _userManager.FindByEmailAsync(signupDto.Email);
+            var existingUser = await _patientService.GetByEmailAsync(signupDto.Email);
             if (existingUser != null)
             {
                 return BadRequest("Email is already in use.");
             }
 
-            IPerson person;
-
-            if (signupDto.Role == "Doctor")
+            // Create Patient
+            var patient = new Patient
             {
-                var doctor = new Doctor
-                {
-                    Id = Guid.NewGuid(),
-                    Email = signupDto.Email,
-                    Name = signupDto.Name,
-                    Surname = signupDto.Surname,
-                    DateJoined = DateTime.UtcNow
-                };
-                person = doctor;
-            }
-            else if (signupDto.Role == "Patient")
-            {
-                var patient = new Patient
-                {
-                    Id = Guid.NewGuid(),
-                    Email = signupDto.Email,
-                    Name = signupDto.Name,
-                    Surname = signupDto.Surname,
-                    DateJoined = DateTime.UtcNow
-                };
-                person = patient;
-            }
-            else
-            {
-                return BadRequest("Invalid user type.");
-            }
+                Id = Guid.NewGuid(),
+                Email = signupDto.Email,
+                Name = signupDto.Name,
+                Surname = signupDto.Surname,
+                DateJoined = DateTime.UtcNow
+            };
 
-            var result = await _userManager.CreateAsync(person, signupDto.Password);
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Errors);
-            }
+            // Create the user with the provided password
+            _patientService.AddAsync(patient);
 
-            // Optionally, you can assign roles here
-            await _userManager.AddToRoleAsync(person, signupDto.Role);
 
-            return Ok(new { message = "User registered successfully." });
+            return Ok(new { message = "Patient registered successfully." });
         }
 
         // Login Method
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
+            var user = await _patientService.GetByEmailAsync(loginDto.Email);
+            if (user == null || !( user.Password == loginDto.Password))
             {
                 return Unauthorized("Invalid credentials");
             }

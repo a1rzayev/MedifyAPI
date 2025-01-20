@@ -9,11 +9,11 @@ namespace MedifyAPI.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class LogsController : ControllerBase
+public class LogController : ControllerBase
 {
     private readonly ILogService _logService;
 
-    public LogsController(ILogService logService)
+    public LogController(ILogService logService)
     {
         _logService = logService;
     }
