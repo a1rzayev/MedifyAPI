@@ -83,7 +83,7 @@ public class TokenEfCoreRepository : ITokenRepository
             ExpirationDate = expirationDate
         };
 
-        _context.RefreshTokens.Add(refreshTokenEntity);
+        await _context.RefreshTokens.AddAsync(refreshTokenEntity);
         await _context.SaveChangesAsync();
     }
 
