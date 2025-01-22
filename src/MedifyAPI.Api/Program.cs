@@ -23,7 +23,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-const string LocalHostUrl = "http://localhost:5271";
+const string LocalHostUrl = "http://localhost:5250";
 
 builder.Services.AddScoped<ITokenRepository, TokenEfCoreRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -70,14 +70,21 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
     {
-        options.AddPolicy("AllowAll", builder =>
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader());
+        policy.WithOrigins("http://localhost:3000") // React app's origin
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
+});
+
 
 var app = builder.Build();
+
+
+app.UseCors("AllowReactApp");
+
 
 // Configure the HTTP request pipeline.`
 if (app.Environment.IsDevelopment())

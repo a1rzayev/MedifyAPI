@@ -29,9 +29,9 @@ public class PatientService : IPatientService
         return await patientRepository.GetByEmailAsync(email);
     }
 
-    public async Task<Patient> AddAsync(Patient patient)
+    public async Task AddAsync(Patient patient)
     {
-        return await patientRepository.AddAsync(patient);
+        await patientRepository.AddAsync(patient);
     }
 
     public async Task<Patient> UpdateAsync(Patient patient)

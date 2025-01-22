@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MedifyAPI.Core.Models;
 using MedifyAPI.Core.Repositories;
 using MedifyAPI.Core.Models.Base;
+using BCrypt.Net;
 using MedifyAPI.Core.DTO;
 using MedifyAPI.Core.Services;
 using MedifyAPI.Infrastructure.Repositories.EfCore.DbContexts;
@@ -38,15 +39,15 @@ namespace MedifyAPI.Api.Controllers
         [HttpPost("Signup")]
         public async Task<IActionResult> SignUp([FromBody] SignupDto signupDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             // Check if email already exists
             var existingUser = await _patientService.GetByEmailAsync(signupDto.Email);
             if (existingUser != null)
             {
-                return BadRequest("Email is already in use.");
+                return BadRequest(new { message = "Email is already in use." });
             }
+
+            // Hash the password
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(signupDto.Password);
 
             // Create Patient
             var patient = new Patient
@@ -55,22 +56,41 @@ namespace MedifyAPI.Api.Controllers
                 Email = signupDto.Email,
                 Name = signupDto.Name,
                 Surname = signupDto.Surname,
+                Password = hashedPassword, // Store the hashed password
                 DateJoined = DateTime.UtcNow
             };
 
-            // Create the user with the provided password
-            _patientService.AddAsync(patient);
+            // Save the patient
+            await _patientService.AddAsync(patient);
 
+            // Generate claims for the token
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, patient.Id.ToString()),
+                new Claim(ClaimTypes.Email, patient.Email),
+            };
 
-            return Ok(new { message = "Patient registered successfully." });
+            // Generate access token and refresh token
+            var token = _tokenService.GenerateAccessToken(claims);
+            var refreshToken = _tokenService.GenerateRefreshToken();
+
+            // Store refresh token in the database
+            await _tokenService.StoreRefreshTokenAsync(patient.Id, refreshToken);
+
+            // Return success response
+            return Ok(new
+            {
+                message = "Patient registered successfully.",
+                accessToken = token,
+                refreshToken = refreshToken
+            });
         }
-
         // Login Method
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
             var user = await _patientService.GetByEmailAsync(loginDto.Email);
-            if (user == null || !( user.Password == loginDto.Password))
+            if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password))
             {
                 return Unauthorized("Invalid credentials");
             }
@@ -79,12 +99,13 @@ namespace MedifyAPI.Api.Controllers
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Email, user.Email)
             };
 
             var accessToken = _tokenService.GenerateAccessToken(claims);
             var refreshToken = _tokenService.GenerateRefreshToken();
+
+            _tokenService.StoreRefreshTokenAsync(user.Id, refreshToken);
 
             // Save refresh token in the database
             var refreshTokenEntity = new RefreshToken
@@ -108,22 +129,10 @@ namespace MedifyAPI.Api.Controllers
 
         // Logout Method
         [HttpPost("Logout")]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout([FromBody] RefreshTokenDto refreshTokenDto)
         {
-            var refreshToken = Request.Cookies["refreshToken"];
-
-            if (refreshToken != null)
-            {
-                var tokenEntity = _context.RefreshTokens.SingleOrDefault(rt => rt.Token == refreshToken);
-                if (tokenEntity != null)
-                {
-                    tokenEntity.IsRevoked = true;
-                    _context.RefreshTokens.Update(tokenEntity);
-                    await _context.SaveChangesAsync();
-                }
-            }
-
-            return Ok("User logged out successfully.");
+            await _tokenService.RevokeRefreshTokenAsync(refreshTokenDto.RefreshToken);
+            return Ok("Logged out successfully.");
         }
     }
 }

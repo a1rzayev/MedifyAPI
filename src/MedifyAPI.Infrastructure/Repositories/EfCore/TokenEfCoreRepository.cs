@@ -32,7 +32,7 @@ public class TokenEfCoreRepository : ITokenRepository
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(double.Parse(_configuration["Jwt:AccessTokenLifetimeMinutes"])),
+            expires: DateTime.UtcNow.AddMinutes(double.TryParse(_configuration["Jwt:AccessTokenLifetimeMinutes"], out var result) ? result : 30),
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
@@ -40,7 +40,13 @@ public class TokenEfCoreRepository : ITokenRepository
 
     public string GenerateRefreshToken()
     {
-        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            var bytes = new byte[64];
+            rng.GetBytes(bytes);
+            return Convert.ToBase64String(bytes);
+        }
+
     }
 
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)

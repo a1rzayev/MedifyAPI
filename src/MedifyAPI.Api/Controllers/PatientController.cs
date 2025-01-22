@@ -37,10 +37,10 @@ public class PatientController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Patient>> Add([FromBody] Patient patient)
+    public async Task<ActionResult> Add([FromBody] Patient patient)
     {
-        var newPatient = await _patientService.AddAsync(patient);
-        return CreatedAtAction(nameof(GetById), new { id = newPatient.Id }, newPatient);
+        await _patientService.AddAsync(patient);
+        return Ok();
     }
 
     [HttpPut("{id}")]

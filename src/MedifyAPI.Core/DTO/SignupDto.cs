@@ -16,9 +16,8 @@ public class SignupDto
     public string? Email { get; set; }
 
     [Required(ErrorMessage = "Password is required.")]
+    [MaxLength(100)]
     [MinLength(8, ErrorMessage = "Password must be at least 8 characters long.")]
     [RegularExpression(@"^(?=.*[A-Z])(?=.*\W)(?=.*\d).+$", ErrorMessage = "Password must contain at least one uppercase letter, one special character, and one number.")]
     public string? Password { get; set; }
-
-    public string? Role { get; set; } // "Doctor" or "Patient"
 }

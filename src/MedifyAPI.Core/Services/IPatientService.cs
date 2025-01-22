@@ -8,7 +8,7 @@ public interface IPatientService
     Task<Patient?> GetByIdAsync(Guid id);
     
     Task<Patient?> GetByEmailAsync(string email);
-    Task<Patient> AddAsync(Patient patient);
+    Task AddAsync(Patient patient);
     Task<Patient> UpdateAsync(Patient patient);
     Task<bool> DeleteAsync(Guid id);
 }
