@@ -11,4 +11,5 @@ public interface IPatientService
     Task AddAsync(Patient patient);
     Task<Patient> UpdateAsync(Patient patient);
     Task<bool> DeleteAsync(Guid id);
+    Task SetValidation(Guid id, bool value);
 }

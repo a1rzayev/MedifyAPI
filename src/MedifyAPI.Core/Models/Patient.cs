@@ -3,7 +3,7 @@ using MedifyAPI.Core.Models.Base;
 
 namespace MedifyAPI.Core.Models;
 
-public class Patient : IPerson
+public class Patient : IUser
 {
     public Guid Id { get; set; }
     public string Name { get; set; }

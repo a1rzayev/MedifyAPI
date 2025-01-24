@@ -43,4 +43,8 @@ public class PatientService : IPatientService
     {
         return await patientRepository.DeleteAsync(id);
     }
+
+    public async Task SetValidation(Guid id, bool value){
+        await patientRepository.SetValidation(id, value);
+    }
 }

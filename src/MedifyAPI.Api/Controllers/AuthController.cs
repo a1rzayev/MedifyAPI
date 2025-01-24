@@ -58,6 +58,7 @@ namespace MedifyAPI.Api.Controllers
             };
 
             await _patientService.AddAsync(patient);
+            await _patientService.SetValidation(patient.Id, false);
 
             var claims = new List<Claim>
             {

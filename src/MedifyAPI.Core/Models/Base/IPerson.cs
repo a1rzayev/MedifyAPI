@@ -2,7 +2,7 @@ using MedifyAPI.Core.Enums;
 
 namespace MedifyAPI.Core.Models.Base;
 
-public interface IPerson
+public interface IUser
 {
     Guid Id { get; set; }
     string Name { get; set; }

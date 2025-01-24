@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MedifyAPI.Core.Models;
 using MedifyAPI.Core.Enums;
+using System.Text.Json;
 
 namespace MedifyAPI.Infrastructure.Repositories.EfCore.DbContexts;
 public class MedifyDbContext : DbContext
@@ -13,6 +14,7 @@ public class MedifyDbContext : DbContext
     public DbSet<Hospital> Hospitals { get; set; }
 
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<UserValidation> UserValidations { get; set; }
 
     public MedifyDbContext(DbContextOptions<MedifyDbContext> options) : base(options)
     {
@@ -41,6 +43,11 @@ public class MedifyDbContext : DbContext
             entity.Property(d => d.Phone).HasMaxLength(15);
             entity.Property(d => d.DateJoined);
             entity.Property(d => d.Speciality).IsRequired();
+            entity.Property(d => d.WorkDaysHours).HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                v => JsonSerializer.Deserialize<Dictionary<string, (TimeSpan, TimeSpan)>>(v, (JsonSerializerOptions)null)
+            );
+            
         });
 
         modelBuilder.Entity<Patient>(entity =>
@@ -91,6 +98,13 @@ public class MedifyDbContext : DbContext
             entity.Property(rt => rt.ExpirationDate).IsRequired();
             entity.Property(rt => rt.IsRevoked).IsRequired();
         });
+
+        modelBuilder.Entity<UserValidation>(entity =>
+        {
+            entity.HasKey(uv => uv.UserId);
+            entity.Property(uv => uv.IsValidated).IsRequired();
+        });
+
         base.OnModelCreating(modelBuilder);
     }
 }

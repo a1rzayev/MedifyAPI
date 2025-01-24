@@ -1,6 +1,7 @@
 using MedifyAPI.Core.Models;
 using MedifyAPI.Core.Repositories;
 using MedifyAPI.Infrastructure.Repositories.EfCore.DbContexts;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedifyAPI.Infrastructure.Repositories.EfCore;
@@ -46,9 +47,17 @@ public class PatientEfCoreRepository : IPatientRepository
     {
         var patient = await _context.Patients.FindAsync(id);
         if (patient == null) return false;
-
         _context.Patients.Remove(patient);
         await _context.SaveChangesAsync();
         return true;
+    }
+
+    public async Task SetValidation(Guid id, bool value){
+        var uservalidation = await _context.UserValidations.FindAsync(id);
+        if(uservalidation == null) 
+            await _context.UserValidations.AddAsync(new UserValidation{ UserId = id, IsValidated = value});
+        else 
+            uservalidation.IsValidated = value;
+        await _context.SaveChangesAsync();
     }
 }

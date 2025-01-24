@@ -3,7 +3,7 @@ using MedifyAPI.Core.Models.Base;
 
 namespace MedifyAPI.Core.Models;
 
-public class Doctor : IPerson
+public class Doctor : IUser
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
@@ -15,4 +15,5 @@ public class Doctor : IPerson
     public string Password { get; set; }
     public DateTime? DateJoined { get; set; } 
     public SpecialityEnum? Speciality { get; set; }
+    public Dictionary<string, (TimeSpan start, TimeSpan end)> WorkDaysHours { get; set; }
 }
