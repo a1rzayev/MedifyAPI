@@ -42,12 +42,12 @@ public class MedifyDbContext : DbContext
             entity.Property(a => a.Password).IsRequired().HasMaxLength(100);
             entity.Property(d => d.Phone).HasMaxLength(15);
             entity.Property(d => d.DateJoined);
-            entity.Property(d => d.Speciality).IsRequired();
+            entity.Property(d => d.Speciality);
             entity.Property(d => d.WorkDaysHours).HasConversion(
-                v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
-                v => JsonSerializer.Deserialize<Dictionary<string, (TimeSpan, TimeSpan)>>(v, (JsonSerializerOptions)null)
+                v => v == null ? null : JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                v => v == null ? null : JsonSerializer.Deserialize<Dictionary<string, (TimeSpan, TimeSpan)>>(v, (JsonSerializerOptions)null)
             );
-            
+
         });
 
         modelBuilder.Entity<Patient>(entity =>

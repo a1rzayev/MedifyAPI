@@ -25,6 +25,9 @@ builder.Services.AddSwaggerGen();
 
 const string LocalHostUrl = "http://localhost:5250";
 
+builder.Services.AddScoped<IUserService, UserService>();
+
+
 builder.Services.AddScoped<ITokenRepository, TokenEfCoreRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
@@ -69,13 +72,21 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+string[] allowedOrigins = new string[]
+{
+    "http://localhost:3001",
+    "http://localhost:3002",
+    "http://localhost:3003"
+};
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp", policy =>
+    options.AddPolicy("AllowReactApps", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") // React app's origin
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyHeader()           
+              .AllowAnyMethod()           
+              .AllowCredentials(); 
     });
 });
 
@@ -83,7 +94,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 
-app.UseCors("AllowReactApp");
+app.UseCors("AllowReactApps");
 
 
 // Configure the HTTP request pipeline.`

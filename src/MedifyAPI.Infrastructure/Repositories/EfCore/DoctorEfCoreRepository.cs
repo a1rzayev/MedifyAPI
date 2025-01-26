@@ -48,4 +48,17 @@ public class DoctorEfCoreRepository : IDoctorRepository
         await _context.SaveChangesAsync();
         return true;
     }
+    public async Task SetValidation(Guid id, bool value){
+        var uservalidation = await _context.UserValidations.FindAsync(id);
+        if(uservalidation == null) 
+            await _context.UserValidations.AddAsync(new UserValidation{ UserId = id, IsValidated = value});
+        else 
+            uservalidation.IsValidated = value;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<Doctor?> GetByEmailAsync(string email)
+    {
+        return await _context.Doctors.FirstOrDefaultAsync(doctor => doctor.Email == email);
+    }
 }

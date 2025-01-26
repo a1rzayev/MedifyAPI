@@ -13,7 +13,7 @@ public class DoctorService : IDoctorService
     {
         this.doctorRepository = doctorRepository;
     }
-    
+
 
     public async Task<IEnumerable<Doctor>> GetAllAsync()
     {
@@ -23,6 +23,10 @@ public class DoctorService : IDoctorService
     public async Task<Doctor?> GetByIdAsync(Guid id)
     {
         return await doctorRepository.GetByIdAsync(id);
+    }
+    public async Task<Doctor?> GetByEmailAsync(string email)
+    {
+        return await doctorRepository.GetByEmailAsync(email);
     }
 
     public async Task<Doctor> AddAsync(Doctor Doctor)
@@ -38,5 +42,10 @@ public class DoctorService : IDoctorService
     public async Task<bool> DeleteAsync(Guid id)
     {
         return await doctorRepository.DeleteAsync(id);
+    }
+
+    public async Task SetValidation(Guid id, bool value)
+    {
+        await doctorRepository.SetValidation(id, value);
     }
 }

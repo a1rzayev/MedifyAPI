@@ -21,25 +21,22 @@ namespace MedifyAPI.Api.Controllers
     {
         private readonly ITokenService _tokenService;
         private readonly MedifyDbContext _context;
-        private readonly IDoctorService _doctorService;
-        private readonly IPatientService _patientService;
+        private readonly IUserService _userService;
 
         public AuthController(
                               ITokenService tokenService,
                               MedifyDbContext context,
-                              IDoctorService doctorService,
-                              IPatientService patientService)
+                              IUserService userService)
         {
             _tokenService = tokenService;
             _context = context;
-            _doctorService = doctorService;
-            _patientService = patientService;
+            _userService = userService;
         }
 
         [HttpPost("Signup")]
         public async Task<IActionResult> SignUp([FromBody] SignupDto signupDto)
         {
-            var existingUser = await _patientService.GetByEmailAsync(signupDto.Email);
+            var existingUser = await _userService.GetByEmailAsync(signupDto.Email);
             if (existingUser != null)
             {
                 return BadRequest(new { message = "Email is already in use." });
@@ -47,7 +44,7 @@ namespace MedifyAPI.Api.Controllers
 
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(signupDto.Password);
 
-            var patient = new Patient
+            var user = new IUser
             {
                 Id = Guid.NewGuid(),
                 Email = signupDto.Email,
@@ -57,23 +54,23 @@ namespace MedifyAPI.Api.Controllers
                 DateJoined = DateTime.UtcNow
             };
 
-            await _patientService.AddAsync(patient);
-            await _patientService.SetValidation(patient.Id, false);
+            await _userService.AddAsync(user, signupDto.Role);
+            await _userService.SetValidation(user.Id, false, signupDto.Role);
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, patient.Id.ToString()),
-                new Claim(ClaimTypes.Email, patient.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
             };
 
             var token = _tokenService.GenerateAccessToken(claims);
             var refreshToken = _tokenService.GenerateRefreshToken();
 
-            await _tokenService.StoreRefreshTokenAsync(patient.Id, refreshToken);
+            await _tokenService.StoreRefreshTokenAsync(user.Id, refreshToken);
 
             return Ok(new
             {
-                message = "Patient registered successfully.",
+                message = "Registered successfully.",
                 accessToken = token,
                 refreshToken = refreshToken
             });
@@ -92,7 +89,7 @@ namespace MedifyAPI.Api.Controllers
             }
 
             // Find user
-            var user = await _patientService.GetByEmailAsync(loginDto.Email);
+            var user = await _userService.GetByEmailAsync(loginDto.Email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password))
             {
                 return Unauthorized("Invalid email or password.");
