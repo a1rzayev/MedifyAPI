@@ -15,6 +15,7 @@ public class MedifyDbContext : DbContext
 
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<UserValidation> UserValidations { get; set; }
+    public DbSet<UserValidation> DoctorValidations { get; set; }
 
     public MedifyDbContext(DbContextOptions<MedifyDbContext> options) : base(options)
     {
@@ -103,6 +104,12 @@ public class MedifyDbContext : DbContext
         {
             entity.HasKey(uv => uv.UserId);
             entity.Property(uv => uv.IsValidated).IsRequired();
+        });
+
+        modelBuilder.Entity<UserValidation>(entity =>
+        {
+            entity.HasKey(dv => dv.UserId);
+            entity.Property(dv => dv.IsValidated).IsRequired();
         });
 
         base.OnModelCreating(modelBuilder);

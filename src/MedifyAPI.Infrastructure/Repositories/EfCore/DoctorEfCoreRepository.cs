@@ -20,6 +20,18 @@ public class DoctorEfCoreRepository : IDoctorRepository
         return await _context.Doctors.ToListAsync();
     }
 
+    public async Task<IEnumerable<Doctor>> GetAllValidatedAsync()
+    {
+        var validatedDoctorIds = await _context.DoctorValidations
+                                .Where(d => d.IsValidated)
+                                .Select(d => d.UserId)
+                                .ToListAsync();
+
+        return await _context.Doctors
+         .Where(d => validatedDoctorIds.Contains(d.Id))
+         .ToListAsync();
+    }
+
     public async Task<Doctor?> GetByIdAsync(Guid id)
     {
         return await _context.Doctors.FindAsync(id);
@@ -48,11 +60,12 @@ public class DoctorEfCoreRepository : IDoctorRepository
         await _context.SaveChangesAsync();
         return true;
     }
-    public async Task SetValidation(Guid id, bool value){
+    public async Task SetValidation(Guid id, bool value)
+    {
         var uservalidation = await _context.UserValidations.FindAsync(id);
-        if(uservalidation == null) 
-            await _context.UserValidations.AddAsync(new UserValidation{ UserId = id, IsValidated = value});
-        else 
+        if (uservalidation == null)
+            await _context.UserValidations.AddAsync(new UserValidation { UserId = id, IsValidated = value });
+        else
             uservalidation.IsValidated = value;
         await _context.SaveChangesAsync();
     }

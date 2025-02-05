@@ -88,6 +88,13 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod()           
               .AllowCredentials(); 
     });
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
 });
 
 

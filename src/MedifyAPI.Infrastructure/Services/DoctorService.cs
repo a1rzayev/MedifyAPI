@@ -19,6 +19,10 @@ public class DoctorService : IDoctorService
     {
         return await doctorRepository.GetAllAsync();
     }
+    public async Task<IEnumerable<Doctor>> GetAllValidatedAsync()
+    {
+        return await doctorRepository.GetAllValidatedAsync();
+    }
 
     public async Task<Doctor?> GetByIdAsync(Guid id)
     {
