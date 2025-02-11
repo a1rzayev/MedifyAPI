@@ -1,4 +1,6 @@
+using MedifyAPI.Core.DTO;
 using MedifyAPI.Core.Models;
+using MedifyAPI.Core.Models.Requests;
 using MedifyAPI.Core.Repositories;
 using MedifyAPI.Infrastructure.Repositories.EfCore.DbContexts;
 using Microsoft.EntityFrameworkCore;
@@ -64,12 +66,17 @@ public class DoctorEfCoreRepository : IDoctorRepository
     {
         var uservalidation = await _context.UserValidations.FindAsync(id);
         if (uservalidation == null)
-            await _context.UserValidations.AddAsync(new UserValidation { UserId = id, IsValidated = value });
+            await _context.UserValidations.AddAsync(new UserValidation(id, value));
         else
             uservalidation.IsValidated = value;
         await _context.SaveChangesAsync();
     }
+    public async Task VerifyDegreeRequestAsync(Guid id){
+        await _context.VerifyDegreeRequests.AddAsync(new VerifyDegreeRequest(id));
+    }
 
+
+    
     public async Task<Doctor?> GetByEmailAsync(string email)
     {
         return await _context.Doctors.FirstOrDefaultAsync(doctor => doctor.Email == email);

@@ -1,6 +1,8 @@
 using MedifyAPI.Core.Models;
 using MedifyAPI.Core.Services;
 using MedifyAPI.Core.Repositories;
+using System.Data.Common;
+using MedifyAPI.Core.Models.Requests;
 
 namespace MedifyAPI.Infrastructure.Services;
 
@@ -23,7 +25,6 @@ public class DoctorService : IDoctorService
     {
         return await doctorRepository.GetAllValidatedAsync();
     }
-
     public async Task<Doctor?> GetByIdAsync(Guid id)
     {
         return await doctorRepository.GetByIdAsync(id);
@@ -52,4 +53,9 @@ public class DoctorService : IDoctorService
     {
         await doctorRepository.SetValidation(id, value);
     }
+    
+    public async Task VerifyDegreeRequestAsync(Guid id){
+        await doctorRepository.VerifyDegreeRequestAsync(id);
+    }
+
 }

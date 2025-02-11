@@ -108,9 +108,6 @@ namespace MedifyAPI.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("WorkDaysHours")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Doctors");
@@ -257,32 +254,6 @@ namespace MedifyAPI.Infrastructure.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("UserValidation");
-                });
-
-            modelBuilder.Entity("MedifyAPI.Core.Models.WeekDayHours", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("EndHour")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EndMinute")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StartHour")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StartMinute")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WeekDay")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("WeekDayHours");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,7 @@
 using MedifyAPI.Core.Models;
+using MedifyAPI.Core.Enums;
+using MedifyAPI.Core.DTO;
+using MedifyAPI.Core.DTO.Base;
 using MedifyAPI.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -42,18 +45,41 @@ public class PatientController : ControllerBase
         await _patientService.AddAsync(patient);
         return Ok();
     }
-
     [HttpPut("{id}")]
-    public async Task<ActionResult<Patient>> Update(Guid id, [FromBody] Patient patient)
+    public async Task<IActionResult> Update(Guid id, IUserUpdateDto updateDto)
     {
-        if (id != patient.Id)
+        var existingUser = await _patientService.GetByIdAsync(id);
+
+        if (existingUser == null)
         {
-            return BadRequest();
+            return null; // User not found
         }
 
-        var updatedPatient = await _patientService.UpdateAsync(patient);
-        return Ok(updatedPatient);
+        // Update user properties
+        existingUser.Name = updateDto.Name;
+        existingUser.Surname = updateDto.Surname;
+        existingUser.Birthdate = updateDto.Birthdate;
+        existingUser.Gender = updateDto.Gender;
+        existingUser.Phone = updateDto.Phone;
+        existingUser.Email = updateDto.Email;
+        existingUser.Password = updateDto.Password; // Ideally hashed before saving
+
+        // Save the updated user
+        var updatedUser = await _patientService.UpdateAsync(existingUser);
+
+
+        return Ok();
     }
+    [HttpGet("Genders")]
+    public async Task<IActionResult> GetGenders()
+    {
+        var genders = Enum.GetNames(typeof(GenderEnum));
+        return Ok(genders);
+    }
+
+
+
+
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
@@ -65,4 +91,8 @@ public class PatientController : ControllerBase
         }
         return NoContent();
     }
+
+
+
+
 }

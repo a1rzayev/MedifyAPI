@@ -1,4 +1,5 @@
 using MedifyAPI.Core.Models;
+using MedifyAPI.Core.Models.Requests;
 
 namespace MedifyAPI.Core.Repositories;
 
@@ -12,4 +13,5 @@ public interface IDoctorRepository
     Task<Doctor> UpdateAsync(Doctor doctor);
     Task<bool> DeleteAsync(Guid id);
     Task SetValidation(Guid id, bool value);
+    Task VerifyDegreeRequestAsync(Guid id);
 }

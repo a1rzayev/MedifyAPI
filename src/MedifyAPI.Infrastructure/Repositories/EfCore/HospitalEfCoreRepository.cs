@@ -28,6 +28,7 @@ public class HospitalEfCoreRepository : IHospitalRepository
     {
         return _context.Hospitals.Where(hospital => hospital.Name == name);
     }
+    
 
     public async Task<Hospital> AddAsync(Hospital hospital)
     {

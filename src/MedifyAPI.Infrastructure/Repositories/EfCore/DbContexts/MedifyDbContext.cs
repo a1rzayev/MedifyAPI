@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MedifyAPI.Core.Models;
 using MedifyAPI.Core.Enums;
 using System.Text.Json;
+using MedifyAPI.Core.Models.Requests;
 
 namespace MedifyAPI.Infrastructure.Repositories.EfCore.DbContexts;
 public class MedifyDbContext : DbContext
@@ -16,6 +17,7 @@ public class MedifyDbContext : DbContext
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<UserValidation> UserValidations { get; set; }
     public DbSet<UserValidation> DoctorValidations { get; set; }
+    public DbSet<VerifyDegreeRequest> VerifyDegreeRequests { get; set; }
 
     public MedifyDbContext(DbContextOptions<MedifyDbContext> options) : base(options)
     {
@@ -44,10 +46,6 @@ public class MedifyDbContext : DbContext
             entity.Property(d => d.Phone).HasMaxLength(15);
             entity.Property(d => d.DateJoined);
             entity.Property(d => d.Speciality);
-            entity.Property(d => d.WorkDaysHours).HasConversion(
-                v => v == null ? null : JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
-                v => v == null ? null : JsonSerializer.Deserialize<Dictionary<string, (TimeSpan, TimeSpan)>>(v, (JsonSerializerOptions)null)
-            );
 
         });
 
@@ -81,19 +79,9 @@ public class MedifyDbContext : DbContext
             entity.Property(h => h.Type).IsRequired();
         });
 
-        modelBuilder.Entity<WeekDayHours>(entity =>
-        {
-            entity.HasKey(w => w.Id);
-            entity.Property(w => w.WeekDay).IsRequired();
-            entity.Property(w => w.StartHour).IsRequired();
-            entity.Property(w => w.StartMinute).IsRequired();
-            entity.Property(w => w.EndHour).IsRequired();
-            entity.Property(w => w.EndMinute).IsRequired();
-        });
-
         modelBuilder.Entity<RefreshToken>(entity =>
         {
-            entity.HasKey(rt => rt.Id); 
+            entity.HasKey(rt => rt.Id);
             entity.Property(rt => rt.UserId).IsRequired();
             entity.Property(rt => rt.Token).IsRequired().HasMaxLength(500);
             entity.Property(rt => rt.ExpirationDate).IsRequired();
@@ -110,6 +98,13 @@ public class MedifyDbContext : DbContext
         {
             entity.HasKey(dv => dv.UserId);
             entity.Property(dv => dv.IsValidated).IsRequired();
+        });
+
+        modelBuilder.Entity<VerifyDegreeRequest>(entity =>
+        {
+            entity.HasKey(vdr => vdr.Id);
+            entity.Property(vdr => vdr.SenderId).IsRequired();
+            entity.Property(vdr => vdr.State).IsRequired();
         });
 
         base.OnModelCreating(modelBuilder);
