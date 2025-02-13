@@ -1,4 +1,5 @@
 using MedifyAPI.Core.DTO;
+using MedifyAPI.Core.Enums;
 using MedifyAPI.Core.Models;
 using MedifyAPI.Core.Models.Requests;
 using MedifyAPI.Core.Repositories;
@@ -41,7 +42,7 @@ public class DoctorEfCoreRepository : IDoctorRepository
 
     public async Task<Doctor> AddAsync(Doctor doctor)
     {
-        _context.Doctors.Add(doctor);
+        await _context.Doctors.AddAsync(doctor);
         await _context.SaveChangesAsync();
         return doctor;
     }
@@ -73,12 +74,38 @@ public class DoctorEfCoreRepository : IDoctorRepository
     }
     public async Task VerifyDegreeRequestAsync(Guid id){
         await _context.VerifyDegreeRequests.AddAsync(new VerifyDegreeRequest(id));
+        await _context.SaveChangesAsync();
     }
 
+    public async Task<bool> HasPendingRequestAsync(Guid id){
+        if(_context.VerifyDegreeRequests.Where(vr => vr.SenderId == id) == null) return false;
+        else return true;
+    }
 
+    public async Task<IEnumerable<VerifyDegreeRequest>?> GetAllVerifyDegreeRequestAsync(){
+        return await _context.VerifyDegreeRequests.ToListAsync();
+    }
     
     public async Task<Doctor?> GetByEmailAsync(string email)
     {
         return await _context.Doctors.FirstOrDefaultAsync(doctor => doctor.Email == email);
+    }
+
+    public async Task ApproveDegreeAsync(Guid requestId){
+        var degreeRequest = await _context.VerifyDegreeRequests.FindAsync(requestId);
+        if (degreeRequest != null){
+            await this.SetValidation(degreeRequest.SenderId, true);
+            degreeRequest.State = RequestStateEnum.Approved;
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task DenyDegreeAsync(Guid requestId){
+        var degreeRequest = await _context.VerifyDegreeRequests.FindAsync(requestId);
+        if (degreeRequest != null){
+            await this.SetValidation(degreeRequest.SenderId, false);
+            degreeRequest.State = RequestStateEnum.Denied;
+            await _context.SaveChangesAsync();
+        }
     }
 }

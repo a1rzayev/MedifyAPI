@@ -15,4 +15,8 @@ public interface IDoctorService
     
     Task SetValidation(Guid id, bool value);
     Task VerifyDegreeRequestAsync(Guid id);
+    Task<bool> HasPendingRequestAsync(Guid id);
+    Task<IEnumerable<VerifyDegreeRequest>?> GetAllVerifyDegreeRequestAsync();
+    Task ApproveDegreeAsync(Guid requestId);
+    Task DenyDegreeAsync(Guid requestId);
 }

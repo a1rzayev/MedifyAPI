@@ -58,4 +58,19 @@ public class DoctorService : IDoctorService
         await doctorRepository.VerifyDegreeRequestAsync(id);
     }
 
+    public async Task<bool> HasPendingRequestAsync(Guid id){
+        return await doctorRepository.HasPendingRequestAsync(id);
+    }
+
+    public async Task<IEnumerable<VerifyDegreeRequest>?> GetAllVerifyDegreeRequestAsync(){
+        return await doctorRepository.GetAllVerifyDegreeRequestAsync();
+    }
+
+    public async Task ApproveDegreeAsync(Guid requestId){
+        await doctorRepository.ApproveDegreeAsync(requestId);
+    }
+    public async Task DenyDegreeAsync(Guid requestId){
+         await doctorRepository.DenyDegreeAsync(requestId);
+    }
+
 }

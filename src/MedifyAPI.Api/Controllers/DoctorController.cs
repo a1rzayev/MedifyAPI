@@ -1,4 +1,5 @@
 using MedifyAPI.Core.Models;
+using MedifyAPI.Core.Models.Requests;
 using MedifyAPI.Core.Services;
 using MedifyAPI.Core.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -36,17 +37,27 @@ public class DoctorController : ControllerBase
             return BadRequest("No file uploaded.");
         }
 
+        // Validate file type
+        var allowedExtensions = new[] { ".pdf" };
+        var fileExtension = Path.GetExtension(pdf.FileName).ToLower();
+        if (!allowedExtensions.Contains(fileExtension))
+        {
+            return BadRequest("Invalid file format. Only PDFs are allowed.");
+        }
+
+        // Process verification
+        await _doctorService.VerifyDegreeRequestAsync(id);
+
         var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Diplomas");
 
         if (!Directory.Exists(uploadPath))
         {
             Directory.CreateDirectory(uploadPath);
         }
-
-        var fileExtension = Path.GetExtension(pdf.FileName);
         var newFileName = $"{id}{fileExtension}";
         var filePath = Path.Combine(uploadPath, newFileName);
 
+        // Save file
         using (var fileStream = new FileStream(filePath, FileMode.Create))
         {
             await pdf.CopyToAsync(fileStream);
@@ -55,6 +66,10 @@ public class DoctorController : ControllerBase
         return Ok(new { message = "File uploaded successfully", filePath });
     }
 
+    [HttpGet("HasPendingRequest/{id}")]
+    public async Task<bool> HasPendingRequest(Guid id){
+        return await _doctorService.HasPendingRequestAsync(id);
+    }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Doctor>> GetById(Guid id)
@@ -72,25 +87,55 @@ public class DoctorController : ControllerBase
 
     //[Authorize()]
     [HttpGet("Diplomas")]
-    public IActionResult GetAllDiplomas()
+    public async Task<IEnumerable<VerifyDegreeRequest>> GetAllDiplomas()
     {
-        var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Diplomas");
+        // var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Diplomas");
 
-        if (!Directory.Exists(uploadPath))
+        // if (!Directory.Exists(uploadPath))
+        // {
+        //     return NotFound("No diplomas found.");
+        // }
+
+        // var files = Directory.GetFiles(uploadPath)
+        //                      .Select(file => new
+        //                      {
+        //                          DoctorId = Path.GetFileNameWithoutExtension(file),
+        //                          FileName = Path.GetFileName(file),
+        //                          FilePath = file
+        //                      })
+        //                      .ToList();
+
+        // return Ok(files);
+        var verifyRequests = await _doctorService.GetAllVerifyDegreeRequestAsync();
+        return verifyRequests;
+    }
+    [HttpGet("DownloadDiploma/{doctorId}")]
+    public IActionResult DownloadDiploma(Guid doctorId)
+    {
+        try
         {
-            return NotFound("No diplomas found.");
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Diplomas");
+
+            // Search for a file that matches the Doctor ID
+            var files = Directory.GetFiles(uploadPath, $"{doctorId}_*.pdf");
+
+            if (files.Length == 0)
+            {
+                return NotFound(new { message = "No diploma found for this doctor." });
+            }
+
+            var filePath = files[0]; // Assuming one file per doctor
+            var fileBytes = System.IO.File.ReadAllBytes(filePath);
+            var contentType = "application/pdf"; // Assuming PDFs
+
+            var fileName = Path.GetFileName(filePath); // Extract the filename
+
+            return File(fileBytes, contentType, fileName);
         }
-
-        var files = Directory.GetFiles(uploadPath)
-                             .Select(file => new
-                             {
-                                 DoctorId = Path.GetFileNameWithoutExtension(file),
-                                 FileName = Path.GetFileName(file),
-                                 FilePath = file
-                             })
-                             .ToList();
-
-        return Ok(files);
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Error downloading file.", error = ex.Message });
+        }
     }
 
 
@@ -139,4 +184,16 @@ public class DoctorController : ControllerBase
         return Ok(genders);
     }
 
+
+    [HttpPost("ApproveDegree/{id}")]
+    public async Task<IActionResult> ApproveDegree(Guid requestId){
+        await _doctorService.ApproveDegreeAsync(requestId);
+        return Ok();
+    }
+
+    [HttpPost("DenyDegree/{id}")]
+    public async Task<IActionResult> DenyDegree(Guid requestId){
+        await _doctorService.DenyDegreeAsync(requestId);
+        return Ok();
+    }
 }

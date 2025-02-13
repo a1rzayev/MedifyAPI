@@ -94,11 +94,6 @@ public class MedifyDbContext : DbContext
             entity.Property(uv => uv.IsValidated).IsRequired();
         });
 
-        modelBuilder.Entity<UserValidation>(entity =>
-        {
-            entity.HasKey(dv => dv.UserId);
-            entity.Property(dv => dv.IsValidated).IsRequired();
-        });
 
         modelBuilder.Entity<VerifyDegreeRequest>(entity =>
         {
