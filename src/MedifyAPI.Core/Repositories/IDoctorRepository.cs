@@ -14,6 +14,7 @@ public interface IDoctorRepository
     Task<bool> DeleteAsync(Guid id);
     Task SetValidation(Guid id, bool value);
     Task VerifyDegreeRequestAsync(Guid id);
+    Task<bool> IsValidated(Guid id);
     Task<bool> HasPendingRequestAsync(Guid id);
     Task<IEnumerable<VerifyDegreeRequest>?> GetAllVerifyDegreeRequestAsync();
     

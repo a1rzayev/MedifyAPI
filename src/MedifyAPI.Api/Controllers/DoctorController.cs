@@ -70,6 +70,11 @@ public class DoctorController : ControllerBase
     public async Task<bool> HasPendingRequest(Guid id){
         return await _doctorService.HasPendingRequestAsync(id);
     }
+    
+    [HttpGet("IsValidated/{id}")]
+    public async Task<bool> IsValidated(Guid id){
+        return await _doctorService.IsValidated(id);
+    }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Doctor>> GetById(Guid id)
@@ -109,15 +114,15 @@ public class DoctorController : ControllerBase
         var verifyRequests = await _doctorService.GetAllVerifyDegreeRequestAsync();
         return verifyRequests;
     }
-    [HttpGet("DownloadDiploma/{doctorId}")]
-    public IActionResult DownloadDiploma(Guid doctorId)
+    [HttpGet("DownloadDiploma/{id}")]
+    public IActionResult DownloadDiploma(Guid id)
     {
         try
         {
             var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Diplomas");
 
             // Search for a file that matches the Doctor ID
-            var files = Directory.GetFiles(uploadPath, $"{doctorId}_*.pdf");
+            var files = Directory.GetFiles(uploadPath, $"{id}.pdf");
 
             if (files.Length == 0)
             {
@@ -184,7 +189,7 @@ public class DoctorController : ControllerBase
         return Ok(genders);
     }
 
-
+    
     [HttpPost("ApproveDegree/{id}")]
     public async Task<IActionResult> ApproveDegree(Guid requestId){
         await _doctorService.ApproveDegreeAsync(requestId);

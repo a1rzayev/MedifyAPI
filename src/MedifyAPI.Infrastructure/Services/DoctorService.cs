@@ -58,6 +58,9 @@ public class DoctorService : IDoctorService
         await doctorRepository.VerifyDegreeRequestAsync(id);
     }
 
+    public async Task<bool> IsValidated(Guid id){
+        return await doctorRepository.IsValidated(id);
+    }
     public async Task<bool> HasPendingRequestAsync(Guid id){
         return await doctorRepository.HasPendingRequestAsync(id);
     }
