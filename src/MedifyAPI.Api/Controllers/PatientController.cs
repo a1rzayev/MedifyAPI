@@ -77,10 +77,6 @@ public class PatientController : ControllerBase
         return Ok(genders);
     }
 
-
-
-
-
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -92,7 +88,10 @@ public class PatientController : ControllerBase
         return NoContent();
     }
 
-
-
-
+    [HttpPost("RendezvouzRequest/{doctorId}/{patientId}")]
+    public async Task<IActionResult> RequestRendezvouz(Guid doctorId, Guid patientId, [FromBody] RendezvouzRequestDto requestDto)
+    {
+        await _patientService.RendezvouzRequestAsync(doctorId, patientId, requestDto.DateTime, requestDto.Description);
+        return Ok(new { message = "Rendezvous request submitted successfully" });
+    }
 }

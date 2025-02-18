@@ -47,4 +47,10 @@ public class PatientService : IPatientService
     public async Task SetValidation(Guid id, bool value){
         await patientRepository.SetValidation(id, value);
     }
+
+    
+    public async Task RendezvouzRequestAsync(Guid doctorId, Guid patientId, DateTime dateTime, string? description){
+        await patientRepository.RendezvouzRequestAsync(doctorId, patientId, dateTime, description);
+    }
+        
 }

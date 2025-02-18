@@ -18,6 +18,7 @@ public class MedifyDbContext : DbContext
     public DbSet<UserValidation> UserValidations { get; set; }
     public DbSet<UserValidation> DoctorValidations { get; set; }
     public DbSet<VerifyDegreeRequest> VerifyDegreeRequests { get; set; }
+    public DbSet<RendezvouzRequest> RendezvouzRequests { get; set; }
 
     public MedifyDbContext(DbContextOptions<MedifyDbContext> options) : base(options)
     {
@@ -100,6 +101,17 @@ public class MedifyDbContext : DbContext
             entity.HasKey(vdr => vdr.Id);
             entity.Property(vdr => vdr.SenderId).IsRequired();
             entity.Property(vdr => vdr.State).IsRequired();
+        });
+
+
+        modelBuilder.Entity<RendezvouzRequest>(entity =>
+        {
+            entity.HasKey(rr => rr.Id);
+            entity.Property(rr => rr.DoctorId).IsRequired();
+            entity.Property(rr => rr.PatientId).IsRequired();
+            entity.Property(rr => rr.DateTime).IsRequired();
+            entity.Property(rr => rr.Description);
+            entity.Property(rr => rr.State).IsRequired();
         });
 
         base.OnModelCreating(modelBuilder);

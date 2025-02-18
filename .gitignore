@@ -1,0 +1,8 @@
+src/MedifyAPI.Api/bin/
+src/MedifyAPI.Api/obj/
+
+src/MedifyAPI.Infrastructure/bin/
+src/MedifyAPI.Infrastructure/obj/
+
+src/MedifyAPI.Core/bin/
+src/MedifyAPI.Core/obj/

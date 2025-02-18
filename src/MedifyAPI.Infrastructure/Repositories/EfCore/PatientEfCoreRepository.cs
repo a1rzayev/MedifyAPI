@@ -1,4 +1,5 @@
 using MedifyAPI.Core.Models;
+using MedifyAPI.Core.Models.Requests;
 using MedifyAPI.Core.Repositories;
 using MedifyAPI.Infrastructure.Repositories.EfCore.DbContexts;
 using Microsoft.AspNetCore.Mvc;
@@ -58,6 +59,12 @@ public class PatientEfCoreRepository : IPatientRepository
             await _context.UserValidations.AddAsync(new UserValidation( id, value));
         else 
             uservalidation.IsValidated = value;
+        await _context.SaveChangesAsync();
+    }
+
+    
+    public async Task RendezvouzRequestAsync(Guid doctorId, Guid patientId, DateTime dateTime, string? description){
+        await _context.RendezvouzRequests.AddAsync(new RendezvouzRequest(doctorId, patientId, dateTime, description));
         await _context.SaveChangesAsync();
     }
 }
