@@ -67,12 +67,14 @@ public class DoctorController : ControllerBase
     }
 
     [HttpGet("HasPendingRequest/{id}")]
-    public async Task<bool> HasPendingRequest(Guid id){
+    public async Task<bool> HasPendingRequest(Guid id)
+    {
         return await _doctorService.HasPendingRequestAsync(id);
     }
-    
+
     [HttpGet("IsValidated/{id}")]
-    public async Task<bool> IsValidated(Guid id){
+    public async Task<bool> IsValidated(Guid id)
+    {
         return await _doctorService.IsValidated(id);
     }
 
@@ -152,16 +154,19 @@ public class DoctorController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] Doctor doctor)
-    {
-        if (id != doctor.Id)
-        {
-            return BadRequest();
-        }
-        var doc = _doctorService.UpdateAsync(doctor);
+public async Task<IActionResult> Update(Guid id, [FromBody] Doctor doctor)
+{
 
-        return NoContent();
+    var existingDoctor = await _doctorService.GetByIdAsync(id);
+    if (existingDoctor == null)
+    {
+        return NotFound("Doctor not found.");
     }
+
+
+    var updatedDoctor = await _doctorService.UpdateAsync(doctor);
+    return Ok(updatedDoctor);
+}
 
 
     [HttpDelete("{id}")]
@@ -189,15 +194,17 @@ public class DoctorController : ControllerBase
         return Ok(genders);
     }
 
-    
+
     [HttpPost("ApproveDegree/{id}")]
-    public async Task<IActionResult> ApproveDegree(Guid requestId){
+    public async Task<IActionResult> ApproveDegree(Guid requestId)
+    {
         await _doctorService.ApproveDegreeAsync(requestId);
         return Ok();
     }
 
     [HttpPost("DenyDegree/{id}")]
-    public async Task<IActionResult> DenyDegree(Guid requestId){
+    public async Task<IActionResult> DenyDegree(Guid requestId)
+    {
         await _doctorService.DenyDegreeAsync(requestId);
         return Ok();
     }
