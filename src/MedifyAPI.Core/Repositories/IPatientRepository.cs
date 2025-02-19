@@ -1,4 +1,5 @@
 using MedifyAPI.Core.Models;
+using MedifyAPI.Core.Models.Requests;
 
 namespace MedifyAPI.Core.Repositories;
 
@@ -14,4 +15,6 @@ public interface IPatientRepository
     Task RendezvouzRequestAsync(Guid DoctorId, Guid PatientId, DateTime dateTime, string? description);
     Task ApproveRendezvouzAsync(Guid requestId);
     Task DenyRendezvouzAsync(Guid requestId);
+    
+    Task<IEnumerable<RendezvouzRequest>> GetAllRendezvouzRequestsAsync(Guid id);
 }

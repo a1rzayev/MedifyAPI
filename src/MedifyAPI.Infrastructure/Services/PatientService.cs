@@ -1,6 +1,7 @@
 using MedifyAPI.Core.Models;
 using MedifyAPI.Core.Services;
 using MedifyAPI.Core.Repositories;
+using MedifyAPI.Core.Models.Requests;
 
 namespace MedifyAPI.Infrastructure.Services;
 
@@ -61,5 +62,8 @@ public class PatientService : IPatientService
     public async Task DenyRendezvouzAsync(Guid requestId)
     {
         await patientRepository.DenyRendezvouzAsync(requestId);
+    }
+        public async Task<IEnumerable<RendezvouzRequest>> GetAllRendezvouzRequestsAsync(Guid id){
+        return await patientRepository.GetAllRendezvouzRequestsAsync(id);
     }
 }

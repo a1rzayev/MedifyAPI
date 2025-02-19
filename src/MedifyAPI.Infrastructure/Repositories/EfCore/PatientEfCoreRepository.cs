@@ -92,4 +92,12 @@ public class PatientEfCoreRepository : IPatientRepository
         rendezvouzRequest.State = RequestStateEnum.Denied;
         await _context.SaveChangesAsync();
     }
+
+    public async Task<IEnumerable<RendezvouzRequest>> GetAllRendezvouzRequestsAsync(Guid id)
+    {
+        var requests = await _context.RendezvouzRequests
+        .Where(rq => rq.PatientId == id)
+        .ToListAsync();
+        return requests;
+    }
 }

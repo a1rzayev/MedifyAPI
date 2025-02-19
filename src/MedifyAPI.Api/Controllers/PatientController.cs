@@ -3,6 +3,7 @@ using MedifyAPI.Core.Enums;
 using MedifyAPI.Core.DTO;
 using MedifyAPI.Core.DTO.Base;
 using MedifyAPI.Core.Services;
+using MedifyAPI.Core.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -129,5 +130,12 @@ public class PatientController : ControllerBase
         {
             return StatusCode(500, new { error = "An unexpected error occurred.", details = ex.Message });
         }
+    }
+
+    
+    [HttpGet("RendezvouzRequests/{id}")]
+    public async Task<IEnumerable<RendezvouzRequest>> GetAllRendezvouzRequests(Guid id){
+        var rendezvousRequests = await _patientService.GetAllRendezvouzRequestsAsync(id);
+        return rendezvousRequests;
     }
 }

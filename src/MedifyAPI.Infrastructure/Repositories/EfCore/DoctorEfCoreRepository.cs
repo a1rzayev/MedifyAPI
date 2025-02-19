@@ -126,7 +126,11 @@ public class DoctorEfCoreRepository : IDoctorRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<RendezvouzRequest>> GetAllRendezvouzRequestsAsync(Guid id){
-        return await _context.RendezvouzRequests.ToListAsync();
+    public async Task<IEnumerable<RendezvouzRequest>> GetAllRendezvouzRequestsAsync(Guid id)
+    {
+        var requests = await _context.RendezvouzRequests
+        .Where(rq => rq.DoctorId == id)
+        .ToListAsync();
+        return requests;
     }
 }
