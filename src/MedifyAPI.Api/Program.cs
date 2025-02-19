@@ -27,6 +27,7 @@ const string LocalHostUrl = "http://localhost:5250";
 
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddScoped<IEnumService, EnumService>();
 
 builder.Services.AddScoped<ITokenRepository, TokenEfCoreRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();

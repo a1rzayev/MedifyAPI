@@ -12,4 +12,6 @@ public interface IPatientService
     Task<bool> DeleteAsync(Guid id);
     Task SetValidation(Guid id, bool value);
     Task RendezvouzRequestAsync(Guid DoctorId, Guid PatientId, DateTime dateTime, string? description);
+    Task ApproveRendezvouzAsync(Guid requestId);
+    Task DenyRendezvouzAsync(Guid requestId);
 }

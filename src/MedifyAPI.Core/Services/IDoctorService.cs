@@ -20,4 +20,6 @@ public interface IDoctorService
     Task<IEnumerable<VerifyDegreeRequest>?> GetAllVerifyDegreeRequestAsync();
     Task ApproveDegreeAsync(Guid requestId);
     Task DenyDegreeAsync(Guid requestId);
+    Task<IEnumerable<RendezvouzRequest>> GetAllRendezvouzRequestsAsync(Guid id);
+    
 }

@@ -1,3 +1,4 @@
+using MedifyAPI.Core.Enums;
 using MedifyAPI.Core.Models;
 using MedifyAPI.Core.Models.Requests;
 using MedifyAPI.Core.Repositories;
@@ -53,18 +54,42 @@ public class PatientEfCoreRepository : IPatientRepository
         return true;
     }
 
-    public async Task SetValidation(Guid id, bool value){
+    public async Task SetValidation(Guid id, bool value)
+    {
         var uservalidation = await _context.UserValidations.FindAsync(id);
-        if(uservalidation == null) 
-            await _context.UserValidations.AddAsync(new UserValidation( id, value));
-        else 
+        if (uservalidation == null)
+            await _context.UserValidations.AddAsync(new UserValidation(id, value));
+        else
             uservalidation.IsValidated = value;
         await _context.SaveChangesAsync();
     }
 
-    
-    public async Task RendezvouzRequestAsync(Guid doctorId, Guid patientId, DateTime dateTime, string? description){
+
+    public async Task RendezvouzRequestAsync(Guid doctorId, Guid patientId, DateTime dateTime, string? description)
+    {
         await _context.RendezvouzRequests.AddAsync(new RendezvouzRequest(doctorId, patientId, dateTime, description));
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task ApproveRendezvouzAsync(Guid requestId)
+    {
+        var rendezvouzRequest = await _context.RendezvouzRequests.FindAsync(requestId);
+        if (rendezvouzRequest == null)
+        {
+            throw new KeyNotFoundException($"Rendezvouz request({requestId}) not found.");
+        }
+        rendezvouzRequest.State = RequestStateEnum.Approved;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DenyRendezvouzAsync(Guid requestId)
+    {
+        var rendezvouzRequest = await _context.RendezvouzRequests.FindAsync(requestId);
+        if (rendezvouzRequest == null)
+        {
+            throw new KeyNotFoundException($"Rendezvouz request({requestId}) not found.");
+        }
+        rendezvouzRequest.State = RequestStateEnum.Denied;
         await _context.SaveChangesAsync();
     }
 }

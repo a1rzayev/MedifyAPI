@@ -94,4 +94,40 @@ public class PatientController : ControllerBase
         await _patientService.RendezvouzRequestAsync(doctorId, patientId, requestDto.DateTime, requestDto.Description);
         return Ok(new { message = "Rendezvous request submitted successfully" });
     }
+
+    [HttpPost("ApproveRendezvouz/{id}")]
+    public async Task<IActionResult> ApproveRendezvouz(Guid id)
+    {
+        try
+        {
+            await _patientService.ApproveRendezvouzAsync(id);
+            return Ok(new { message = "Rendezvous request submitted successfully" });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = "An unexpected error occurred.", details = ex.Message });
+        }
+    }
+    
+    [HttpPost("DenyRendezvouz/{id}")]
+    public async Task<IActionResult> DenyRendezvouz(Guid id)
+    {
+        try
+        {
+            await _patientService.DenyRendezvouzAsync(id);
+            return Ok(new { message = "Rendezvous request submitted successfully" });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = "An unexpected error occurred.", details = ex.Message });
+        }
+    }
 }

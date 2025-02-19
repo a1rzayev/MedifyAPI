@@ -20,4 +20,7 @@ public interface IDoctorRepository
     
     Task ApproveDegreeAsync(Guid requestId);
     Task DenyDegreeAsync(Guid requestId);
+    
+    Task<IEnumerable<RendezvouzRequest>> GetAllRendezvouzRequestsAsync(Guid id);
+    
 }

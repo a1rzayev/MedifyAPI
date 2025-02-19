@@ -52,5 +52,14 @@ public class PatientService : IPatientService
     public async Task RendezvouzRequestAsync(Guid doctorId, Guid patientId, DateTime dateTime, string? description){
         await patientRepository.RendezvouzRequestAsync(doctorId, patientId, dateTime, description);
     }
-        
+
+    public async Task ApproveRendezvouzAsync(Guid requestId)
+    {
+        await patientRepository.ApproveRendezvouzAsync(requestId);
+    }
+
+    public async Task DenyRendezvouzAsync(Guid requestId)
+    {
+        await patientRepository.DenyRendezvouzAsync(requestId);
+    }
 }

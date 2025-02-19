@@ -208,4 +208,10 @@ public async Task<IActionResult> Update(Guid id, [FromBody] Doctor doctor)
         await _doctorService.DenyDegreeAsync(requestId);
         return Ok();
     }
+
+    [HttpGet("RendezvouzRequests/{id}")]
+    public async Task<IEnumerable<RendezvouzRequest>> GetAllRendezvouzRequests(Guid id){
+        var rendezvousRequests = await _doctorService.GetAllRendezvouzRequestsAsync(id);
+        return rendezvousRequests;
+    }
 }

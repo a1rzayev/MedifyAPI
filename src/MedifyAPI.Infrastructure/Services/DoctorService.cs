@@ -75,5 +75,7 @@ public class DoctorService : IDoctorService
     public async Task DenyDegreeAsync(Guid requestId){
          await doctorRepository.DenyDegreeAsync(requestId);
     }
-
+    public async Task<IEnumerable<RendezvouzRequest>> GetAllRendezvouzRequestsAsync(Guid id){
+        return await doctorRepository.GetAllRendezvouzRequestsAsync(id);
+    }
 }
