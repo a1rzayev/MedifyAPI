@@ -40,4 +40,10 @@ public class EnumController : ControllerBase
         return Ok(_enumService.GetAllRequestStateEnum());
     }
 
+    [HttpGet("HospitalTypes")]
+    public async Task<IActionResult> GetHospitalTypes()
+    {
+        return Ok(_enumService.GetAllHospitalTypeEnum());
+    }
+
 }
