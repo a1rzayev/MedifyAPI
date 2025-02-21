@@ -1,4 +1,5 @@
 using MedifyAPI.Core.Models;
+using MedifyAPI.Core.DTO;
 using MedifyAPI.Core.Models.Requests;
 using MedifyAPI.Core.Services;
 using MedifyAPI.Core.Enums;
@@ -154,7 +155,7 @@ public class DoctorController : ControllerBase
     }
 
     [HttpPut("{id}")]
-public async Task<IActionResult> Update(Guid id, [FromBody] Doctor doctor)
+public async Task<IActionResult> Update(Guid id, [FromBody] DoctorValidationDto doctorValidationDto)
 {
 
     var existingDoctor = await _doctorService.GetByIdAsync(id);
@@ -163,9 +164,16 @@ public async Task<IActionResult> Update(Guid id, [FromBody] Doctor doctor)
         return NotFound("Doctor not found.");
     }
 
+    existingDoctor.Name = doctorValidationDto.Name;
+    existingDoctor.Surname = doctorValidationDto.Surname;
+    existingDoctor.Phone = doctorValidationDto.Phone;
+    existingDoctor.Email = doctorValidationDto.Email;
+    existingDoctor.Gender = (GenderEnum)doctorValidationDto.Gender;
+    existingDoctor.Speciality = (SpecialityEnum)doctorValidationDto.Speciality;
+    existingDoctor.Birthdate = doctorValidationDto.Birthdate;
 
-    var updatedDoctor = await _doctorService.UpdateAsync(doctor);
-    return Ok(updatedDoctor);
+    await _doctorService.UpdateAsync(existingDoctor);
+    return Ok(existingDoctor);
 }
 
 

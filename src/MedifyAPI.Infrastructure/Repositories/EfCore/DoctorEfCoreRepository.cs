@@ -133,4 +133,10 @@ public class DoctorEfCoreRepository : IDoctorRepository
         .ToListAsync();
         return requests;
     }
+
+    // public async Task<IEnumerable<Patient>> GetAllPatients(Guid id){
+    //     var requests = GetAllRendezvouzRequestsAsync(id);
+    //     var doctors = await _context.Patients.
+    //     return requests;
+    // }
 }
